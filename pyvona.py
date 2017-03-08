@@ -126,6 +126,17 @@ class Voice(object):
         else:
             fp.write(r.content)
 
+    def fetch_voice_data(self, text_to_speak):
+        """Fetch voice data for given text and return data
+        """
+        r = self._send_amazon_auth_packet_v4(
+            'POST', 'tts', 'application/json', '/CreateSpeech', '',
+            self._generate_payload(text_to_speak), self._region, self._host)
+        if r.content.startswith(b'{'):
+            raise PyvonaException('Error fetching voice: {}'.format(r.content))
+        else:
+            return r.content
+
     def speak(self, text_to_speak, use_cache=False):
         """Speak a given text
         """
